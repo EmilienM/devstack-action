@@ -1,0 +1,93 @@
+name: Run pull-request workflow
+on: [pull_request]
+env:
+  LOG_DIR: /tmp/devstack-logs
+jobs:
+  devstack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install python pip
+        run: |
+          python -m pip install --upgrade pip
+      # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md#mysql
+      - name: Start MySQL
+        run: |
+          sudo systemctl start mysql.service
+      - name: Checkout Devstack
+        uses: actions/checkout@v2
+        with:
+          repository: openstack/devstack
+          path: ./devstack
+      - name: Configure devstack
+        run: |
+          cat <<EOF > local.conf
+          [[local|localrc]]
+          ADMIN_PASSWORD=secret
+          DATABASE_PASSWORD=root
+          RABBIT_PASSWORD=secret
+          SERVICE_PASSWORD=secret
+          SWIFT_HASH=1234123412341234
+          ENABLED_SERVICES+=",-horizon,swift"
+          LOGFILE=$LOG_DIR/devstack.log
+          EOF
+        working-directory: ./devstack
+      - name: Run devstack
+        run: ./stack.sh
+        working-directory: ./devstack
+      - name: Checkout go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15'
+      - name: Checkout Gophercloud
+        uses: actions/checkout@v2
+        with:
+          repository: gophercloud/gophercloud
+          path: ./gophercloud
+      - name: Run Gophercloud acceptance tests
+        run: |
+          pushd ~/work/devstack-actions/devstack-actions/devstack
+          source openrc admin admin
+          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
+          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
+          _NETWORK_ID=$(openstack network show private -c id -f value)
+          _SUBNET_ID=$(openstack subnet show private-subnet -c id -f value)
+          _EXTGW_ID=$(openstack network show public -c id -f value)
+          _IMAGE=$(openstack image list | grep -i cirros | head -n 1)
+          _IMAGE_ID=$(echo $_IMAGE | awk -F\| '{print $2}' | tr -d ' ')
+          _IMAGE_NAME=$(echo $_IMAGE | awk -F\| '{print $3}' | tr -d ' ')
+          echo export OS_IMAGE_NAME="$_IMAGE_NAME" >> openrc
+          echo export OS_IMAGE_ID="$_IMAGE_ID" >> openrc
+          echo export OS_NETWORK_ID="$_NETWORK_ID" >> openrc
+          echo export OS_SUBNET_ID="$_SUBNET_ID" >> openrc
+          echo export OS_EXTGW_ID="$_EXTGW_ID" >> openrc
+          echo export OS_POOL_NAME="public" >> openrc
+          echo export OS_FLAVOR_ID=99 >> openrc
+          echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
+          echo export OS_DOMAIN_ID=default >> openrc
+          source openrc admin admin
+          popd
+
+          ACCEPTANCE_TESTS=(
+          acceptance/openstack
+          acceptance/openstack/compute/v2
+          acceptance/openstack/identity/v2
+          acceptance/openstack/identity/v3
+          acceptance/openstack/imageservice/v2
+          acceptance/openstack/placement/v1
+          )
+          for acceptance_test in ${ACCEPTANCE_TESTS[@]}; do
+            go test -v -tags "fixtures acceptance" ./${acceptance_test} 2>&1 | tee -a $LOG_DIR/acceptance.log
+          done
+        working-directory: ./gophercloud
+      - name: Generate logs on failure
+        run: |
+          mkdir -p $LOG_DIR
+          sudo journalctl -o short-precise --no-pager &> $LOG_DIR/journal.log
+          free -m > $LOG_DIR/free.txt
+        if: failure()
+      - name: Upload logs artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: devstack-logs
+          path: /tmp/devstack-logs/*
