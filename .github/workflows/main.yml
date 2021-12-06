@@ -1,0 +1,16 @@
+on: [pull_request]
+
+jobs:
+  devstack_action_defaults:
+    runs-on: ubuntu-latest
+    name: A job to deploy devstack with defaults
+    steps:
+      - uses: actions/checkout@v2
+      - id: devstack-action
+        uses: actions/devstack-action@v1
+      - name: Upload logs artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: devstack-logs
+          path: /tmp/devstack-logs/*

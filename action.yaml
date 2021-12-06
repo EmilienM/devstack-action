@@ -1,0 +1,40 @@
+name: 'devstack-action'
+description: 'Deploy OpenStack with devstack'
+inputs:
+  enabled_services:
+    description: 'Add or remove services to deploy via devstack'
+    default: ''
+  log_dir:
+    description: 'Directory for logs'
+    default: '/tmp/devstack-logs'
+runs:
+  using: "composite"
+  steps:
+    - name: Install python pip
+      run: |
+        python -m pip install --upgrade pip
+    # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md#mysql
+    - name: Start MySQL
+      run: |
+        sudo systemctl start mysql.service
+    - name: Checkout Devstack
+      uses: actions/checkout@v2
+      with:
+        repository: openstack/devstack
+        path: ./devstack
+    - name: Configure devstack
+      run: |
+        cat <<EOF > local.conf
+        [[local|localrc]]
+        ADMIN_PASSWORD=secret
+        DATABASE_PASSWORD=root
+        RABBIT_PASSWORD=secret
+        SERVICE_PASSWORD=secret
+        SWIFT_HASH=1234123412341234
+        ENABLED_SERVICES+=${{ inputs.enabled_services }}
+        LOGFILE=${{ inputs.log_dir }}/devstack.log
+        EOF
+      working-directory: ./devstack
+    - name: Run devstack
+      run: ./stack.sh
+      working-directory: ./devstack
