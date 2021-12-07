@@ -35,9 +35,15 @@ runs:
         RABBIT_PASSWORD=secret
         SERVICE_PASSWORD=secret
         SWIFT_HASH=1234123412341234
-        ENABLED_SERVICES+=-horizon,-dstat,${{ inputs.enabled_services }}
         LOGFILE=${{ inputs.log_dir }}/devstack.log
         EOF
+        # horizon does not work in github action, permission error
+        # dstat log takes too much memory to be stored by log artifacts
+        ENABLED_SERVICES=",-horizon,-dstat"
+        if [[ "${{ inputs.enabled_services }}" != "" ]]; then
+          ENABLED_SERVICES+=",${{ inputs.enabled_services }}"
+        fi
+        echo "${ENABLED_SERVICES}" >> local.conf
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
