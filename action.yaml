@@ -4,6 +4,9 @@ inputs:
   branch:
     description: 'Name of the branch to deploy'
     default: 'master'
+  conf_overrides:
+    description: 'Configuration overrides for devstack'
+    default: ''
   enabled_services:
     description: 'Add or remove services to deploy via devstack'
     default: ''
@@ -44,6 +47,9 @@ runs:
           ENABLED_SERVICES+=",${{ inputs.enabled_services }}"
         fi
         echo "ENABLED_SERVICES+=${ENABLED_SERVICES}" >> local.conf
+        if [[ "${{ inputs.conf_overrides }}" != "" ]]; then
+          echo "${{ inputs.conf_overrides }}" >> local.conf
+        fi
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
