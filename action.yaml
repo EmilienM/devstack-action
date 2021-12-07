@@ -11,12 +11,12 @@ runs:
   using: "composite"
   steps:
     - name: Install python pip
-      run: |
-        python -m pip install --upgrade pip
+      run: python -m pip install --upgrade pip
+      shell: bash
     # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md#mysql
     - name: Start MySQL
-      run: |
-        sudo systemctl start mysql.service
+      run: sudo systemctl start mysql.service
+      shell: bash
     - name: Checkout Devstack
       uses: actions/checkout@v2
       with:
@@ -35,6 +35,8 @@ runs:
         LOGFILE=${{ inputs.log_dir }}/devstack.log
         EOF
       working-directory: ./devstack
+      shell: bash
     - name: Run devstack
       run: ./stack.sh
       working-directory: ./devstack
+      shell: bash
