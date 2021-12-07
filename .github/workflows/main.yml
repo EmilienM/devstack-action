@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: devstack-action
-        uses: actions/devstack-action@v1
+        uses: EmilienM/devstack-action@v1
       - name: Upload logs artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v2
