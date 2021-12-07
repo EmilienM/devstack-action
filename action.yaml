@@ -43,7 +43,7 @@ runs:
         if [[ "${{ inputs.enabled_services }}" != "" ]]; then
           ENABLED_SERVICES+=",${{ inputs.enabled_services }}"
         fi
-        echo "${ENABLED_SERVICES}" >> local.conf
+        echo "ENABLED_SERVICES+=${ENABLED_SERVICES}" >> local.conf
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
