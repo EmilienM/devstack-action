@@ -23,6 +23,11 @@ runs:
     - name: Start MySQL
       run: sudo systemctl start mysql.service
       shell: bash
+    # See http://lists.openstack.org/pipermail/openstack-discuss/2020-October/018060.html
+    - name: Remove python3-simplejson
+      run: sudo apt-get purge -y python3-simplejson
+      continue-on-error: true
+      shell: bash
     - name: Checkout Devstack
       uses: actions/checkout@v2
       with:
