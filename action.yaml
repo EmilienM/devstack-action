@@ -24,7 +24,7 @@ runs:
       run: sudo systemctl start mysql.service
       shell: bash
     - name: Remove unwanted packages
-      run: sudo apt-get purge -y python3-simplejson python-pyasn1-modules postgresql* || true
+      run: sudo apt-get purge -y python3-simplejson python3-pyasn1-modules postgresql* || true
       shell: bash
     - name: Checkout Devstack
       uses: actions/checkout@v2
