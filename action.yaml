@@ -23,6 +23,12 @@ runs:
     - name: Start MySQL
       run: sudo systemctl start mysql.service
       shell: bash
+    # This is to avoid RabbitMQ to fail at startup because a wrong version of erlang was installed
+    - name: Workaround for RabbitMQ
+      run: |
+        sudo apt-get purge -y esl-erlang || true
+        sudo apt-get install -y erlang rabbitmq-server || true
+      shell: bash
     - name: Remove unwanted packages
       run: sudo apt-get purge -y python3-simplejson python3-pyasn1-modules postgresql* || true
       shell: bash
