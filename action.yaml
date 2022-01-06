@@ -28,6 +28,10 @@ runs:
         sudo apt-get purge -y esl-erlang || true
         sudo apt-get install -y erlang rabbitmq-server || true
       shell: bash
+    - name: Workaround for docker.io
+      run: |
+        sudo apt-get install -y runc || true
+      shell: bash
     - name: Remove unwanted packages
       run: sudo apt-get purge -y python3-simplejson python3-pyasn1-modules postgresql* || true
       shell: bash
