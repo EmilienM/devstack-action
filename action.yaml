@@ -51,7 +51,8 @@ runs:
         SERVICE_PASSWORD=secret
         SWIFT_HASH=1234123412341234
         LOGFILE=${{ inputs.log_dir }}/devstack.log
-        USE_PYTHON3="True"
+        USE_PYTHON3=True
+        INSTALL_TEMPEST=False
         EOF
         # horizon does not work in github action, permission error
         # dstat log takes too much memory to be stored by log artifacts
