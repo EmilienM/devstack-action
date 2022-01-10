@@ -3,13 +3,13 @@ on:
   - push
 
 jobs:
-  devstack_action_defaults:
+  with_defaults:
     runs-on: ubuntu-latest
     name: A job to deploy devstack with defaults
     steps:
       - uses: actions/checkout@v2
       - id: devstack-action
-        uses: EmilienM/devstack-action@v0.1
+        uses: ./
       - name: Upload logs artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v2
