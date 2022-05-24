@@ -56,7 +56,8 @@ runs:
         EOF
         # horizon does not work in github action, permission error
         # dstat log takes too much memory to be stored by log artifacts
-        ENABLED_SERVICES=",-horizon,-dstat"
+        # tempest must be disabled otherwise it will get installed still
+        ENABLED_SERVICES=",-horizon,-dstat,-tempest"
         if [[ "${{ inputs.enabled_services }}" != "" ]]; then
           ENABLED_SERVICES+=",${{ inputs.enabled_services }}"
         fi
