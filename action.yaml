@@ -13,6 +13,9 @@ inputs:
   log_dir:
     description: 'Directory for logs'
     default: '/tmp/devstack-logs'
+  enable_workaround_docker_io:
+    description: 'Enable or disable workaround for docker.io'
+    default: 'true'
 runs:
   using: "composite"
   steps:
@@ -29,6 +32,7 @@ runs:
         sudo apt-get install -y erlang rabbitmq-server || true
       shell: bash
     - name: Workaround for docker.io
+      if: ${{ inputs.enable_workaround_docker_io == 'true' }}
       run: |
         sudo apt-get install -y runc || true
       shell: bash
