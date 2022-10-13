@@ -7,12 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to deploy devstack with defaults
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: devstack-action
         uses: ./
       - name: Upload logs artifacts on failure
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: devstack-logs
           path: /tmp/devstack-logs/*
