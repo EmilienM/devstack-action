@@ -57,6 +57,7 @@ runs:
         LOGFILE=${{ inputs.log_dir }}/devstack.log
         USE_PYTHON3=True
         INSTALL_TEMPEST=False
+        GIT_BASE=https://github.com
         EOF
         # horizon does not work in github action, permission error
         # dstat log takes too much memory to be stored by log artifacts
