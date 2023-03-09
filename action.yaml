@@ -16,6 +16,9 @@ inputs:
   enable_workaround_docker_io:
     description: 'Enable or disable workaround for docker.io'
     default: 'true'
+  force:
+    description: 'Allow running devstack on unsupported distro'
+    default: 'no'
 runs:
   using: "composite"
   steps:
@@ -73,6 +76,8 @@ runs:
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
+      env:
+        FORCE: ${{ inputs.force }}
       run: ./stack.sh
       working-directory: ./devstack
       shell: bash
