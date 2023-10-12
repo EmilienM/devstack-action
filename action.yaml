@@ -22,9 +22,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run update and upgrade
-      run: sudo apt update && sudo apt -y upgrade
-      shell: bash
     - name: Install python pip
       run: python -m pip install --upgrade pip
       shell: bash
@@ -77,6 +74,9 @@ runs:
           echo "${{ inputs.conf_overrides }}" >> local.conf
         fi
       working-directory: ./devstack
+      shell: bash
+    - name: Upgrade the operating system
+      run: sudo apt-get update && sudo apt-get -y upgrade
       shell: bash
     - name: Run devstack
       env:
