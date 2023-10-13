@@ -22,9 +22,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run update and upgrade
-      run: sudo apt update && sudo apt -y upgrade
-      shell: bash
     - name: Install python pip
       run: python -m pip install --upgrade pip
       shell: bash
