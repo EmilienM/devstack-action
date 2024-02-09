@@ -73,6 +73,14 @@ runs:
         if [[ "${{ inputs.conf_overrides }}" != "" ]]; then
           echo "${{ inputs.conf_overrides }}" >> local.conf
         fi
+
+        # Overriding target release for unmaintained versions
+        # otherwide devstack will fail to clone some repos.
+        TARGET_BRANCH=${{ inputs.branch }}
+        if [[ "${{ inputs.branch }}" == *"yoga"* ]]; then
+            TARGET_BRANCH="yoga-eom"
+        fi
+        echo "TARGET_BRANCH=${TARGET_BRANCH}" >> local.conf
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
