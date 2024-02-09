@@ -62,17 +62,6 @@ runs:
         INSTALL_TEMPEST=False
         GIT_BASE=https://github.com
         EOF
-        # horizon does not work in github action, permission error
-        # dstat log takes too much memory to be stored by log artifacts
-        # tempest must be disabled otherwise it will get installed still
-        ENABLED_SERVICES=",-horizon,-dstat,-tempest"
-        if [[ "${{ inputs.enabled_services }}" != "" ]]; then
-          ENABLED_SERVICES+=",${{ inputs.enabled_services }}"
-        fi
-        echo "ENABLED_SERVICES+=${ENABLED_SERVICES}" >> local.conf
-        if [[ "${{ inputs.conf_overrides }}" != "" ]]; then
-          echo "${{ inputs.conf_overrides }}" >> local.conf
-        fi
 
         # Overriding target release for unmaintained versions
         # otherwide devstack will fail to clone some repos.
@@ -81,6 +70,20 @@ runs:
             TARGET_BRANCH="yoga-eom"
         fi
         echo "TARGET_BRANCH=${TARGET_BRANCH}" >> local.conf
+
+        # horizon does not work in github action, permission error
+        # dstat log takes too much memory to be stored by log artifacts
+        # tempest must be disabled otherwise it will get installed still
+        ENABLED_SERVICES=",-horizon,-dstat,-tempest"
+        if [[ "${{ inputs.enabled_services }}" != "" ]]; then
+          ENABLED_SERVICES+=",${{ inputs.enabled_services }}"
+        fi
+        echo "ENABLED_SERVICES+=${ENABLED_SERVICES}" >> local.conf
+
+        # This must stay at the end to allow any overrides
+        if [[ "${{ inputs.conf_overrides }}" != "" ]]; then
+          echo "${{ inputs.conf_overrides }}" >> local.conf
+        fi
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
