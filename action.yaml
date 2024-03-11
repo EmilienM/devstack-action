@@ -81,9 +81,9 @@ runs:
         echo "ENABLED_SERVICES+=${ENABLED_SERVICES}" >> local.conf
 
         # This must stay at the end to allow any overrides
-        if [[ "${{ inputs.conf_overrides }}" != "" ]]; then
-          echo "${{ inputs.conf_overrides }}" >> local.conf
-        fi
+        cat << EOF_CONF_OVERRIDES >> local.conf
+        ${{ inputs.conf_overrides }}
+        EOF_CONF_OVERRIDES
       working-directory: ./devstack
       shell: bash
     - name: Run devstack
