@@ -63,14 +63,6 @@ runs:
         GIT_BASE=https://github.com
         EOF
 
-        # Overriding target release for unmaintained versions
-        # otherwide devstack will fail to clone some repos.
-        TARGET_BRANCH=${{ inputs.branch }}
-        if [[ "${{ inputs.branch }}" == *"yoga"* ]]; then
-            TARGET_BRANCH="yoga-eom"
-        fi
-        echo "TARGET_BRANCH=${TARGET_BRANCH}" >> local.conf
-
         # horizon does not work in github action, permission error
         # dstat log takes too much memory to be stored by log artifacts
         # tempest must be disabled otherwise it will get installed still
