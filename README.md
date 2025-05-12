@@ -1,4 +1,4 @@
-[![.github/workflows/with-defaults.yml](https://github.com/EmilienM/devstack-action/actions/workflows/with-defaults.yml/badge.svg)](https://github.com/EmilienM/devstack-action/actions/workflows/with-defaults.yml)
+[![.github/workflows/with-defaults.yml](https://github.com/gophercloud/devstack-action/actions/workflows/with-defaults.yml/badge.svg)](https://github.com/gophercloud/devstack-action/actions/workflows/with-defaults.yml)
 
 # devstack-actions
 Github actions which will install OpenStack with devstack.
@@ -9,14 +9,14 @@ With defaults:
 ```
     steps:
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@v0.6
+        uses: gophercloud/devstack-action@v0.6
 ```
 
 With overrides:
 ```
     steps:
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@v0.6
+        uses: gophercloud/devstack-action@v0.6
         with:
           branch: stable/xena
           conf_overrides:
