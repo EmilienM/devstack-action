@@ -31,8 +31,10 @@ runs:
     # This is to avoid RabbitMQ to fail at startup because a wrong version of erlang was installed
     - name: Workaround for RabbitMQ
       run: |
+        # fix freaky leading "-e" in /etc/hosts
+        sudo sed -i 's/^-e \+//g' /etc/hosts
         sudo apt-get purge -y esl-erlang || true
-        sudo apt-get install -y erlang rabbitmq-server || true
+        sudo apt-get install -y erlang rabbitmq-server # if rabbitmq-server is not installed, tests must be stopped
       shell: bash
     - name: Workaround for docker.io
       if: ${{ inputs.enable_workaround_docker_io == 'true' }}
