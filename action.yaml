@@ -28,12 +28,6 @@ runs:
     - name: Erase MySQL package
       run: sudo apt-get purge mysql-* || true
       shell: bash
-    # This is to avoid RabbitMQ to fail at startup because a wrong version of erlang was installed
-    - name: Workaround for RabbitMQ
-      run: |
-        sudo apt-get purge -y esl-erlang || true
-        sudo apt-get install -y erlang rabbitmq-server || true
-      shell: bash
     - name: Workaround for docker.io
       if: ${{ inputs.enable_workaround_docker_io == 'true' }}
       run: |
