@@ -28,10 +28,10 @@ runs:
     - name: Erase MySQL package
       run: sudo apt-get purge mysql-* || true
       shell: bash
-    # This is to avoid RabbitMQ to fail at startup because a wrong version of erlang was installed
+    # This is to avoid RabbitMQ to fail at startup because a wrong version of erlang was installed.
+    # We also work around https://github.com/actions/runner-images/issues/12192
     - name: Workaround for RabbitMQ
       run: |
-        # fix freaky leading "-e" in /etc/hosts
         sudo sed -i 's/^-e \+//g' /etc/hosts
         sudo apt-get purge -y esl-erlang || true
         sudo apt-get install -y erlang rabbitmq-server # if rabbitmq-server is not installed, tests must be stopped
