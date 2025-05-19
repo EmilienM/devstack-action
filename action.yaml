@@ -81,6 +81,11 @@ runs:
         EOF_CONF_OVERRIDES
       working-directory: ./devstack
       shell: bash
+    - name: Dump local.conf
+      run: |
+        cat local.conf
+      working-directory: ./devstack
+      shell: bash
     - name: Run devstack
       env:
         FORCE: ${{ inputs.force }}
