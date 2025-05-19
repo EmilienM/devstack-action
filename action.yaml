@@ -61,7 +61,6 @@ runs:
         SERVICE_PASSWORD=secret
         SWIFT_HASH=1234123412341234
         LOGFILE=${{ inputs.log_dir }}/devstack.log
-        USE_PYTHON3=True
         INSTALL_TEMPEST=False
         GIT_BASE=https://github.com
         EOF
